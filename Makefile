@@ -6,7 +6,7 @@
 #    By: gle-mini <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/20 15:12:26 by gle-mini          #+#    #+#              #
-#    Updated: 2023/05/22 20:43:33 by gle-mini         ###   ########.fr        #
+#    Updated: 2023/05/23 21:28:30 by gle-mini         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,17 +20,16 @@ C_MAIN	=	main
 
 SRCS	=	$(addprefix src/, $(addsuffix .c, $(C_MAIN)))
 
-OBJS	=	$(SRCS:.c=.o)
+OBJS	=	$(addprefix obj/, $(patsubst src/%,%,$(SRCS:.c=.o)))
 
 LIBFT		=	./libft/libft.a
 LIBFT_DIR	=	./libft
-LIBCOMP			=	$(MSG_LIBCOMP) \
-					make --silent -C libft \
-					$(MSG_LIBREADY)
+LIBCOMP		=	$(MSG_LIBCOMP) \
+				make --silent -C libft \
+				$(MSG_LIBREADY)
 	
-
-HEADER		=	./include/
-HEADER_FILE	=	./include/cub3d.h
+MLX_COMP	=	make -C minilibx-linux
+MLX			=	libmlx.a
 
 #-------------------Constant strings------------------------
 
@@ -40,11 +39,17 @@ FLAGS		=	-Wall -Wextra -Werror -g3 -I $(HEADER)
 
 #LIBS			= -Lmlx -lmlx -framework OpenGL -framework AppKit -lm
 
-LIBS		=	-lmlx -framework OpenGL -framework AppKit
+#LIBS		=	-lmlx -framework OpenGL -framework AppKit
+
+LIBS		=	-lXext -lX11 -lm
 
 INCLUDE		=	-Iinclude -Ilibft
 
 NAME		=	cub3d
+
+HEADER		=	./include/
+HEADER_FILE	=	./include/cub3d.h
+
 
 #-----------------------Messages----------------------------
 
@@ -54,26 +59,31 @@ MSG_LIBREADY	=	echo "libft is compiled"
 
 #-----------------------Rules-------------------------------
 
+# make pour a compilation multithread
+# all: @$(MAKE) -j $(NAME)
+
 all: $(NAME)
 
-$(NAME): $(OBJS) $(HEADER_FILE) $(MLX)
-		@$(LIBCOMP)
-		$(COMPILER) $(FLAGS) $(OBJS) -o $(NAME) $(LIBFT) $(LIBS) -v
+cub3d: $(OBJS) $(HEADER_FILE)
+	@$(LIBCOMP)
+	$(COMPILER) $(FLAGS) $(OBJS) -o $(NAME) $(LIBFT) -L minilibx-linux $(LIBS) -v
 
-$(MLX):	
-		@$(MAKE) -C minilibx-linux
 
 .c.o:
 	$(COMPILER) $(FLAGS) $(INCLUDE) -c $< -o ${<:.c=.o}
 
+obj/%.o: src/%.c
+	@mkdir -p obj
+	$(COMPILER) $(FLAGS) -I $(HEADER) -I minilibx-linux -I libft -c $< -o $@
+
 clean:
-		@$(MAKE) -C minilibx-linux clean
-		rm -rf $(OBJS) $(BONUS_OBJS)
+	@make -C minilibx-linux clean
+	rm -rf obj
 
 fclean:	clean
-		rm -rf $(NAME)
+	rm -rf $(NAME)
 
 re:	fclean
 	$(NAME)
 
-.PHONY:		all clean fclean re
+.PHONY:		all, clean, fclean, re
