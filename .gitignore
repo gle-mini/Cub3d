@@ -1,0 +1,46 @@
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers de log
+logs
+*.log
+npm-debug.log*
+
+# Répertoire Runtime
+runtime/
+
+# Fichiers de l'environnement de développement
+.env
+
+# Répertoire du Node
+node_modules/
+
+# Répertoire de distribution
+/dist
+
+# Cache de la JVM
+.mvn/timing.properties
+
+# Fichiers d'Intellij
+.idea/
+
+# Répertoire de build
+/target
+
+# Fichiers de la base de données
+*.sqlite
+
+# Les fichiers Python
+*.py[cod]
+*.pyo
+*.pyd
+__pycache__/
+*.pyc
+
+# c tags
+tags
+*/tags
+
+# Fichiers objets
+*/.o
