@@ -78,12 +78,12 @@ obj/%.o: src/%.c
 
 clean:
 	@make -C minilibx-linux clean
+	@make -C libft clean
 	rm -rf obj
 
 fclean:	clean
 	rm -rf $(NAME)
 
-re:	fclean
-	$(NAME)
+re:	fclean all
 
 .PHONY:		all, clean, fclean, re
