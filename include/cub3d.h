@@ -6,7 +6,7 @@
 /*   By: gle-mini <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 15:34:47 by gle-mini          #+#    #+#             */
-/*   Updated: 2023/05/22 20:27:00 by gle-mini         ###   ########.fr       */
+/*   Updated: 2023/05/27 18:16:36 by gle-mini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <mlx.h>
 
 #endif
 
