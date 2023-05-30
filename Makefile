@@ -6,7 +6,7 @@
 #    By: gle-mini <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/20 15:12:26 by gle-mini          #+#    #+#              #
-#    Updated: 2023/05/23 21:28:30 by gle-mini         ###   ########.fr        #
+#    Updated: 2023/05/30 16:14:33 by gle-mini         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -74,6 +74,7 @@ cub3d: $(OBJS) $(HEADER_FILE)
 
 obj/%.o: src/%.c
 	@mkdir -p obj
+	@make -C minilibx-linux
 	$(COMPILER) $(FLAGS) -I $(HEADER) -I minilibx-linux -I libft -c $< -o $@
 
 clean:
