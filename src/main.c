@@ -6,7 +6,7 @@
 /*   By: gle-mini <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 15:32:09 by gle-mini          #+#    #+#             */
-/*   Updated: 2023/05/30 18:38:47 by gle-mini         ###   ########.fr       */
+/*   Updated: 2023/06/15 18:25:57 by gle-mini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,12 @@ typedef struct	s_data
 {
 	void	*mlx;
 	void	*win;
+	double	posX;
+	double	posY;
+	double	dirX;
+	double	dirY;
+	double	planeX;
+	double	planeY;
 }	t_data;
 
 int	key_hook(int key, void *param)
@@ -74,36 +80,38 @@ int	key_hook(int key, void *param)
 	}		
 	if(key == 126) // Up arrow key
 	{
-		if(worldMap[int(posX + dirX * moveSpeed)][int(posY)] == false) posX += dirX * moveSpeed;
-		if(worldMap[int(posX)][int(posY + dirY * moveSpeed)] == false) posY += dirY * moveSpeed;
+		if(worldMap[(int)(data->posX + data->dirX * moveSpeed)][(int)(data->posY)] == false)
+			data->posX += data->dirX * moveSpeed;
+		if(worldMap[(int)(data->posX)][(int)(data->posY + data->dirY * moveSpeed)] == false)
+			data->posY += data->dirY * moveSpeed;
 	}
 	//move backwards if no wall behind you
 	if(key == 125) // Down arrow key
 	{
-		if(worldMap[int(posX - dirX * moveSpeed)][int(posY)] == false) posX -= dirX * moveSpeed;
-		if(worldMap[int(posX)][int(posY - dirY * moveSpeed)] == false) posY -= dirY * moveSpeed;
+		if(worldMap[(int)(data->posX - data->dirX * moveSpeed)][(int)(data->posY)] == false) data->posX -= data->dirX * moveSpeed;
+		if(worldMap[(int)(data->posX)][(int)(data->posY - data->dirY * moveSpeed)] == false) data->posY -= data->dirY * moveSpeed;
 	}
 	//rotate to the right
 	if(key == 124) // Right arrow key
 	{
 		//both camera direction and camera plane must be rotated
-		double oldDirX = dirX;
-		dirX = dirX * cos(-rotSpeed) - dirY * sin(-rotSpeed);
-		dirY = oldDirX * sin(-rotSpeed) + dirY * cos(-rotSpeed);
-		double oldPlaneX = planeX;
-		planeX = planeX * cos(-rotSpeed) - planeY * sin(-rotSpeed);
-		planeY = oldPlaneX * sin(-rotSpeed) + planeY * cos(-rotSpeed);
+		double oldDirX = data->dirX;
+		data->dirX = data->dirX * cos(-rotSpeed) - data->dirY * sin(-rotSpeed);
+		data->dirY = oldDirX * sin(-rotSpeed) + data->dirY * cos(-rotSpeed);
+		double oldPlaneX = data->planeX;
+		data->planeX = data->planeX * cos(-rotSpeed) - data->planeY * sin(-rotSpeed);
+		data->planeY = oldPlaneX * sin(-rotSpeed) + data->planeY * cos(-rotSpeed);
 	}
 	//rotate to the left
 	if(key == 123) // Left arrow key
 	{
 		//both camera direction and camera plane must be rotated
-		double oldDirX = dirX;
-		dirX = dirX * cos(rotSpeed) - dirY * sin(rotSpeed);
-		dirY = oldDirX * sin(rotSpeed) + dirY * cos(rotSpeed);
-		double oldPlaneX = planeX;
-		planeX = planeX * cos(rotSpeed) - planeY * sin(rotSpeed);
-		planeY = oldPlaneX * sin(rotSpeed) + planeY * cos(rotSpeed);
+		double oldDirX = data->dirX;
+		data->dirX = data->dirX * cos(rotSpeed) - data->dirY * sin(rotSpeed);
+		data->dirY = oldDirX * sin(rotSpeed) + data->dirY * cos(rotSpeed);
+		double oldPlaneX = data->planeX;
+		data->planeX = data->planeX * cos(rotSpeed) - data->planeY * sin(rotSpeed);
+		data->planeY = oldPlaneX * sin(rotSpeed) + data->planeY * cos(rotSpeed);
 	}
 	return (0);
 }
@@ -124,17 +132,19 @@ int main(int argc, char **argv)
 	win_ptr = mlx_new_window(mlx_ptr, WIDTH, HEIGHT, "Cub3d");  // create a new window
 	if (!win_ptr)
 	{
-		mlx_destroy_display(mlx_ptr, win_ptr);
+		mlx_destroy_display(win_ptr);
 		free(mlx_ptr);
 		return (1);
 	}
 	data->mlx = mlx_ptr;
 	data->win = win_ptr;
 
-
-	double	posX = 22, posY = 12;  //x and y start position
-	double	dirX = -1, dirY = 0; //initial direction vector
-	double	planeX = 0, planeY = 0.66; //the 2d raycaster version of camera plane
+	data->posX = 22; //x start position
+	data->posY = 12; //y start position
+	data->dirX = -1; //initial direction vector
+	data->dirY = 0; //initial direction vector
+	data->planeX = 0; //the 2d raycaster version of camera plane
+	data->planeY = 0.66; //the 2d raycaster version of camera plane
 
 	/*
 	double	time = 0; //time of current frame
@@ -144,15 +154,16 @@ int main(int argc, char **argv)
 
 	while(1)
 	{
+		int w = 23;
 		for(int x = 0; x < w; x++)
 		{
 			//calculate ray position and direction
 			double cameraX = 2 * x / (double)w - 1; //x-coordinate in camera space
-			double rayDirX = dirX + planeX * cameraX;
-			double rayDirY = dirY + planeY * cameraX;
+			double rayDirX = data->dirX + data->planeX * cameraX;
+			double rayDirY = data->dirY + data->planeY * cameraX;
 			//which box of the map we're in
-			int mapX = int(posX);
-			int mapY = int(posY);
+			int mapX = (int)(data->posX);
+			int mapY = (int)(data->posY);
 
 			//length of ray from current position to next x or y-side
 			double sideDistX;
@@ -169,13 +180,14 @@ int main(int argc, char **argv)
 			//stepping further below works. So the values can be computed as below.
 			// Division through zero is prevented, even though technically that's not
 			// needed in C++ with IEEE 754 floating point values.
-			double deltaDistX = (rayDirX == 0) ? 1e30 : abs(1 / rayDirX);
-			double deltaDistY = (rayDirY == 0) ? 1e30 : abs(1 / rayDirY);
+			double deltaDistX = (rayDirX == 0) ? pow(1, 30) : fabs(1 / rayDirX);
+			double deltaDistY = (rayDirY == 0) ? pow(1, 30) : fabs(1 / rayDirY);
 
 			double perpWallDist;
 
 			//what direction to step in x or y-direction (either +1 or -1)
 			int stepX;
+
 			int stepY;
 
 			int hit = 0; //was there a wall hit?
@@ -184,22 +196,22 @@ int main(int argc, char **argv)
 			if(rayDirX < 0)
 			{
 				stepX = -1;
-				sideDistX = (posX - mapX) * deltaDistX;
+				sideDistX = (data->posX - mapX) * deltaDistX;
 			}
 			else
 			{
 				stepX = 1;
-				sideDistX = (mapX + 1.0 - posX) * deltaDistX;
+				sideDistX = (mapX + 1.0 - data->posX) * deltaDistX;
 			}
 			if(rayDirY < 0)
 			{
 				stepY = -1;
-				sideDistY = (posY - mapY) * deltaDistY;
+				sideDistY = (data->posY - mapY) * deltaDistY;
 			}
 			else
 			{
 				stepY = 1;
-				sideDistY = (mapY + 1.0 - posY) * deltaDistY;
+				sideDistY = (mapY + 1.0 - data->posY) * deltaDistY;
 			}
 			//perform DDA
 			while(hit == 0)
@@ -229,6 +241,7 @@ int main(int argc, char **argv)
 			if(side == 0) perpWallDist = (sideDistX - deltaDistX);
 			else          perpWallDist = (sideDistY - deltaDistY);
 
+			int h = 23;
 			//Calculate height of line to draw on screen
 			int lineHeight = (int)(h / perpWallDist);
 
