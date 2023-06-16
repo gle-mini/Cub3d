@@ -6,7 +6,7 @@
 #    By: gle-mini <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/20 15:12:26 by gle-mini          #+#    #+#              #
-#    Updated: 2023/05/30 16:14:33 by gle-mini         ###   ########.fr        #
+#    Updated: 2023/06/16 17:27:12 by gle-mini         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,7 +41,7 @@ FLAGS		=	-Wall -Wextra -Werror -g3 -I $(HEADER)
 
 #LIBS		=	-lmlx -framework OpenGL -framework AppKit
 
-LIBS		=	-lXext -lX11 -lm
+LIBS		=	-lmlx -lXext -lX11 -lm
 
 INCLUDE		=	-Iinclude -Ilibft
 
