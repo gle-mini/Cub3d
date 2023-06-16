@@ -6,7 +6,7 @@
 /*   By: gle-mini <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 15:32:09 by gle-mini          #+#    #+#             */
-/*   Updated: 2023/06/15 18:25:57 by gle-mini         ###   ########.fr       */
+/*   Updated: 2023/06/16 17:17:27 by gle-mini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,10 @@ int	key_hook(int key, void *param)
 	return (0);
 }
 
-
+int	create_trgb(int t, int r, int g, int b)
+{
+	return (t << 24 | r << 16 | g << 8 | b);
+}
 
 //place the example code below here:
 int main(int argc, char **argv)
@@ -124,6 +127,11 @@ int main(int argc, char **argv)
 	void	*mlx_ptr;
 	void	*win_ptr;
 	t_data	*data;
+
+	data = malloc(sizeof(t_data));
+
+	(void)argc;
+	(void)argv;
 
 	mlx_ptr = mlx_init();  // initialize MiniLibX
 	if (!mlx_ptr)
@@ -235,9 +243,7 @@ int main(int argc, char **argv)
 			//Calculate distance projected on camera direction. This is the shortest distance from the point where the wall is
 			//hit to the camera plane. Euclidean to center camera point would give fisheye effect!
 			//This can be computed as (mapX - posX + (1 - stepX) / 2) / rayDirX for side == 0, or same formula with Y
-			//for size == 1, but can be simplified to the code below thanks to how sideDist and deltaDist are computed:
-			//because they were left scaled to |rayDir|. sideDist is the entire length of the ray above after the multiple
-			//steps, but we subtract deltaDist once because one step more into the wall was taken above.
+			//for size == 1, but can be simplified to the code below thanks to how sideDist and deltaDist are computed: because they were left scaled to |rayDir|. sideDist is the entire length of the ray above after the multiple steps, but we subtract deltaDist once because one step more into the wall was taken above.
 			if(side == 0) perpWallDist = (sideDistX - deltaDistX);
 			else          perpWallDist = (sideDistY - deltaDistY);
 
@@ -255,11 +261,10 @@ int main(int argc, char **argv)
 			int	color;
 			switch(worldMap[mapX][mapY])
 			{
-				case 1:  color = mlx_rgb(255, 0, 0);    break; //red
-				case 2:  color = mlx_rgb(0, 255, 0);  break; //green
-				case 3:  color = mlx_rgb(0, 0, 255);   break; //blue
-				case 4:  color = mlx_rgb(255, 255, 255);  break; //white
-				default: color = mlx_rgb(255, 255, 0); break; //yellow
+				case 1:  color = mlx_get_color_value(data->mlx, create_trgb(0, 255, 0, 0));    break; //red
+				case 2:  color = mlx_get_color_value(data->mlx, create_trgb(0, 0, 255, 0));  break; //green
+				case 4:  color = mlx_get_color_value(data->mlx, create_trgb(0, 255, 255, 255));  break; //white
+				default: color = mlx_get_color_value(data->mlx, create_trgb(0, 255, 255, 0)); break; //yellow
 			}
 
 			//give x and y sides different brightness
