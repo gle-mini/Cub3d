@@ -56,12 +56,13 @@ SRCS			=	ft_isalnum.c \
 					ft_strcspn.c \
 					ft_is_directory.c \
 					ft_is_file_exist.c \
+					get_next_line.c \
 
 OBJS			= $(SRCS:.c=.o)
 
 CC				= cc
 RM				= rm -f
-CFLAGS			= -Wall -Wextra -Werror -I.
+CFLAGS			= -Wall -Wextra -Werror -g3 -I.
 
 NAME			= libft.a
 

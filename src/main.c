@@ -6,294 +6,148 @@
 /*   By: gle-mini <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 15:32:09 by gle-mini          #+#    #+#             */
-/*   Updated: 2023/06/16 17:17:27 by gle-mini         ###   ########.fr       */
+/*   Updated: 2023/06/26 18:10:43 by gle-mini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-#define WIDTH 800
-#define HEIGHT 600
-
-#define screenWidth 640
-#define screenHeight 480
-#define mapWidth 24
-#define mapHeight 24
-
-int worldMap[mapWidth][mapHeight]=
+static int	is_directory(const char *path)
 {
-	{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,2,2,2,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
-	{1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,3,0,0,0,3,0,0,0,1},
-	{1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,2,2,0,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,0,0,0,0,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,0,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
-};
+	int	fd;
 
-
-
-typedef struct	s_data
-{
-	void	*mlx;
-	void	*win;
-	double	posX;
-	double	posY;
-	double	dirX;
-	double	dirY;
-	double	planeX;
-	double	planeY;
-}	t_data;
-
-int	key_hook(int key, void *param)
-{
-	t_data *data;
-	int frameTime = 1;
-
-	data = (t_data *)param;
-
-	//speed modifiers	
-	double moveSpeed = frameTime * 5.0; //the constant value is in squares/second
-	double rotSpeed = frameTime * 3.0; //the constant value is in radians/second
-
-	if (key == 53)  // ESC key
+	fd = open(path, __O_DIRECTORY);
+	if (fd != -1)
 	{
-		mlx_destroy_window(data->mlx, data->win);
-		exit(0);
-	}		
-	if(key == 126) // Up arrow key
-	{
-		if(worldMap[(int)(data->posX + data->dirX * moveSpeed)][(int)(data->posY)] == false)
-			data->posX += data->dirX * moveSpeed;
-		if(worldMap[(int)(data->posX)][(int)(data->posY + data->dirY * moveSpeed)] == false)
-			data->posY += data->dirY * moveSpeed;
-	}
-	//move backwards if no wall behind you
-	if(key == 125) // Down arrow key
-	{
-		if(worldMap[(int)(data->posX - data->dirX * moveSpeed)][(int)(data->posY)] == false) data->posX -= data->dirX * moveSpeed;
-		if(worldMap[(int)(data->posX)][(int)(data->posY - data->dirY * moveSpeed)] == false) data->posY -= data->dirY * moveSpeed;
-	}
-	//rotate to the right
-	if(key == 124) // Right arrow key
-	{
-		//both camera direction and camera plane must be rotated
-		double oldDirX = data->dirX;
-		data->dirX = data->dirX * cos(-rotSpeed) - data->dirY * sin(-rotSpeed);
-		data->dirY = oldDirX * sin(-rotSpeed) + data->dirY * cos(-rotSpeed);
-		double oldPlaneX = data->planeX;
-		data->planeX = data->planeX * cos(-rotSpeed) - data->planeY * sin(-rotSpeed);
-		data->planeY = oldPlaneX * sin(-rotSpeed) + data->planeY * cos(-rotSpeed);
-	}
-	//rotate to the left
-	if(key == 123) // Left arrow key
-	{
-		//both camera direction and camera plane must be rotated
-		double oldDirX = data->dirX;
-		data->dirX = data->dirX * cos(rotSpeed) - data->dirY * sin(rotSpeed);
-		data->dirY = oldDirX * sin(rotSpeed) + data->dirY * cos(rotSpeed);
-		double oldPlaneX = data->planeX;
-		data->planeX = data->planeX * cos(rotSpeed) - data->planeY * sin(rotSpeed);
-		data->planeY = oldPlaneX * sin(rotSpeed) + data->planeY * cos(rotSpeed);
+		close(fd);
+		return (1);
 	}
 	return (0);
 }
 
-int	create_trgb(int t, int r, int g, int b)
+static char	*find_extension(const char *path)
 {
-	return (t << 24 | r << 16 | g << 8 | b);
+	char	*dot;
+
+	dot = NULL;
+	dot = ft_strrchr(path, '.');
+	if (!dot || dot == path)
+		return (NULL);
+	return (dot + 1);
 }
 
-//place the example code below here:
+static int	check_file(const char *path)
+{
+	if (is_directory(path))
+		return (DIR_MAP);
+	if (find_extension(path) == NULL)
+		return (EXT_MAP);
+	if (ft_strncmp(find_extension(path), "cub", 4))
+		return (EXT_MAP);
+	return (0);
+}
+
+int	read_map(char *map_path, t_list **map_list)
+{
+	int		error_handle;
+	int		fd;
+	char	*line;
+
+	line = NULL;
+	error_handle = check_file(map_path);
+	if (error_handle != 0)
+		return (error_handle);
+	fd = open(map_path, O_RDONLY);
+	if (fd < 0)
+		return (OPEN_ERR);
+	line = get_next_line(fd);
+	if (line == NULL)
+		return (GNL_NULL);
+	while (line != NULL)
+	{
+		ft_lstadd_back(map_list, ft_lstnew(ft_strdup(line)));
+		if (line)
+			free(line);
+		line = get_next_line(fd);
+	}
+	if (line)
+		free(line);
+	close(fd);
+	return (0);
+}
+
+int	ft_list_to_array_str(t_list *list, char ***array)
+{
+	int	i;
+
+	i = 0;
+	if (array == NULL)
+		return (ADDRESS_ERR);
+	*array = malloc(sizeof(char *) * (ft_lstsize(list) + 1));
+	if (*array == NULL)
+		return (MALLOC_ERR);
+	while (list)
+	{
+		(*array)[i] = ft_strdup((char *)list->content);
+		if ((*array)[i] == NULL)
+			return (MALLOC_ERR);
+		list = list->next;
+		i++;
+	}
+	(*array)[i] = NULL;
+	return (0);
+}
+
+void print_map(char **map)
+{
+	int x;
+
+	x = 0;
+	while (map[x])
+	{
+		ft_putstr_fd(map[x], 1);
+		x++;
+	}
+}
+
+int	parse_map(char *map_path, t_data *data)
+{	
+	int		error_handle;
+	t_list	*map_list;		
+
+	map_list = NULL;
+	error_handle = read_map(map_path, &map_list);
+	if (error_handle != 0)
+		return (error_handle);
+	error_handle = ft_list_to_array_str(map_list, &(data->map));
+	if (error_handle != 0)
+		return (error_handle);
+	print_map(data->map);	
+	return (0);
+}
+
+void ft_init_data(t_data *data)
+{
+	data->map = NULL;
+}
+
+int check_border(char **map)
+{
+
+}
+
 int main(int argc, char **argv)
 {
-	void	*mlx_ptr;
-	void	*win_ptr;
-	t_data	*data;
+	t_data *data;
 
+	data = NULL;
 	data = malloc(sizeof(t_data));
-
-	(void)argc;
-	(void)argv;
-
-	mlx_ptr = mlx_init();  // initialize MiniLibX
-	if (!mlx_ptr)
-		return (1);
-
-	win_ptr = mlx_new_window(mlx_ptr, WIDTH, HEIGHT, "Cub3d");  // create a new window
-	if (!win_ptr)
-	{
-		mlx_destroy_display(win_ptr);
-		free(mlx_ptr);
-		return (1);
-	}
-	data->mlx = mlx_ptr;
-	data->win = win_ptr;
-
-	data->posX = 22; //x start position
-	data->posY = 12; //y start position
-	data->dirX = -1; //initial direction vector
-	data->dirY = 0; //initial direction vector
-	data->planeX = 0; //the 2d raycaster version of camera plane
-	data->planeY = 0.66; //the 2d raycaster version of camera plane
-
-	/*
-	double	time = 0; //time of current frame
-	double	oldTime = 0; //time of previous frame
-	*/
-
-
-	while(1)
-	{
-		int w = 23;
-		for(int x = 0; x < w; x++)
-		{
-			//calculate ray position and direction
-			double cameraX = 2 * x / (double)w - 1; //x-coordinate in camera space
-			double rayDirX = data->dirX + data->planeX * cameraX;
-			double rayDirY = data->dirY + data->planeY * cameraX;
-			//which box of the map we're in
-			int mapX = (int)(data->posX);
-			int mapY = (int)(data->posY);
-
-			//length of ray from current position to next x or y-side
-			double sideDistX;
-			double sideDistY;
-
-			//length of ray from one x or y-side to next x or y-side
-			//these are derived as:
-			//deltaDistX = sqrt(1 + (rayDirY * rayDirY) / (rayDirX * rayDirX))
-			//deltaDistY = sqrt(1 + (rayDirX * rayDirX) / (rayDirY * rayDirY))
-			//which can be simplified to abs(|rayDir| / rayDirX) and abs(|rayDir| / rayDirY)
-			//where |rayDir| is the length of the vector (rayDirX, rayDirY). Its length,
-			//unlike (dirX, dirY) is not 1, however this does not matter, only the
-			//ratio between deltaDistX and deltaDistY matters, due to the way the DDA
-			//stepping further below works. So the values can be computed as below.
-			// Division through zero is prevented, even though technically that's not
-			// needed in C++ with IEEE 754 floating point values.
-			double deltaDistX = (rayDirX == 0) ? pow(1, 30) : fabs(1 / rayDirX);
-			double deltaDistY = (rayDirY == 0) ? pow(1, 30) : fabs(1 / rayDirY);
-
-			double perpWallDist;
-
-			//what direction to step in x or y-direction (either +1 or -1)
-			int stepX;
-
-			int stepY;
-
-			int hit = 0; //was there a wall hit?
-			int side; //was a NS or a EW wall hit?
-					  //calculate step and initial sideDist
-			if(rayDirX < 0)
-			{
-				stepX = -1;
-				sideDistX = (data->posX - mapX) * deltaDistX;
-			}
-			else
-			{
-				stepX = 1;
-				sideDistX = (mapX + 1.0 - data->posX) * deltaDistX;
-			}
-			if(rayDirY < 0)
-			{
-				stepY = -1;
-				sideDistY = (data->posY - mapY) * deltaDistY;
-			}
-			else
-			{
-				stepY = 1;
-				sideDistY = (mapY + 1.0 - data->posY) * deltaDistY;
-			}
-			//perform DDA
-			while(hit == 0)
-			{
-				//jump to next map square, either in x-direction, or in y-direction
-				if(sideDistX < sideDistY)
-				{
-					sideDistX += deltaDistX;
-					mapX += stepX;
-					side = 0;
-				}
-				else
-				{
-					sideDistY += deltaDistY;
-					mapY += stepY;
-					side = 1;
-				}
-				//Check if ray has hit a wall
-				if(worldMap[mapX][mapY] > 0) hit = 1;
-			}
-			//Calculate distance projected on camera direction. This is the shortest distance from the point where the wall is
-			//hit to the camera plane. Euclidean to center camera point would give fisheye effect!
-			//This can be computed as (mapX - posX + (1 - stepX) / 2) / rayDirX for side == 0, or same formula with Y
-			//for size == 1, but can be simplified to the code below thanks to how sideDist and deltaDist are computed: because they were left scaled to |rayDir|. sideDist is the entire length of the ray above after the multiple steps, but we subtract deltaDist once because one step more into the wall was taken above.
-			if(side == 0) perpWallDist = (sideDistX - deltaDistX);
-			else          perpWallDist = (sideDistY - deltaDistY);
-
-			int h = 23;
-			//Calculate height of line to draw on screen
-			int lineHeight = (int)(h / perpWallDist);
-
-			//calculate lowest and highest pixel to fill in current stripe
-			int drawStart = -lineHeight / 2 + h / 2;
-			if(drawStart < 0) drawStart = 0;
-			int drawEnd = lineHeight / 2 + h / 2;
-			if(drawEnd >= h) drawEnd = h - 1;
-
-			//choose wall color
-			int	color;
-			switch(worldMap[mapX][mapY])
-			{
-				case 1:  color = mlx_get_color_value(data->mlx, create_trgb(0, 255, 0, 0));    break; //red
-				case 2:  color = mlx_get_color_value(data->mlx, create_trgb(0, 0, 255, 0));  break; //green
-				case 4:  color = mlx_get_color_value(data->mlx, create_trgb(0, 255, 255, 255));  break; //white
-				default: color = mlx_get_color_value(data->mlx, create_trgb(0, 255, 255, 0)); break; //yellow
-			}
-
-			//give x and y sides different brightness
-			if(side == 1) {color = color / 2;}
-
-			/*
-			//draw the pixels of the stripe as a vertical line
-			verLine(x, drawStart, drawEnd, color);
-			*/
-			// Draw the stripe as a vertical line
-			for (int y = drawStart; y <= drawEnd; y++) {
-				mlx_pixel_put(mlx_ptr, win_ptr, x, y, color);
-			}
-		}
-		//timing for input and FPS counter
-		/*
-		oldTime = time;
-		time = getTicks();
-		double frameTime = (time - oldTime) / 1000.0; //frameTime is the time this frame has taken, in seconds
-		print(1.0 / frameTime); //FPS counter
-		redraw();
-		cls();
-		*/
-
-				//move forward if no wall in front of you
-
-	}
-	mlx_key_hook(win_ptr, key_hook, data);  // set key press event handling function
-
-	mlx_loop(mlx_ptr);  // enter event loop
-
+	if (data == NULL)
+		return (MALLOC_ERR);
+	ft_init_data(data);
+	if (argc != 2)
+		return (NUMBER_ARG);
+	parse_map(argv[1], data);
+	check_border(data->map);
+	return (EXIT_SUCCESS);
 }

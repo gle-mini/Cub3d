@@ -1,0 +1,13 @@
+Pour le parsing et check la map:
+
+https://leetcode.com/problems/number-of-closed-islands/editorial/
+
+https://www.google.com/search?q=check+grid+closed+dfs&oq=check+grid+closed+dfs&aqs=chrome..69i57j33i160l2.1636j0j7&sourceid=chrome&ie=UTF-8
+
+https://medium.com/@ojhasaurabh2099/traversing-a-grid-using-dfs-ac7a391f7af8
+
+https://gamedev.stackexchange.com/questions/187018/fastest-way-to-check-for-surrounding-tiles
+
+https://stackoverflow.com/questions/53458062/finding-the-existence-of-an-enclosed-space-within-a-2d-m-x-n-grid
+
+

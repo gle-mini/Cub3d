@@ -6,7 +6,7 @@
 /*   By: gle-mini <gle-mini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 04:19:58 by gle-mini          #+#    #+#             */
-/*   Updated: 2023/03/14 20:46:45 by gle-mini         ###   ########.fr       */
+/*   Updated: 2023/06/26 13:40:46 by gle-mini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,5 +155,7 @@ size_t			ft_strcspn(const char *s1, const char *s2);
 t_bool			ft_is_directory(const char *str);
 
 t_bool			ft_is_file_exist(const char *str);
+
+char 			*get_next_line(int fd);
 
 #endif
