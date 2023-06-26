@@ -6,7 +6,7 @@
 #    By: gle-mini <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/20 15:12:26 by gle-mini          #+#    #+#              #
-#    Updated: 2023/06/26 19:50:04 by gle-mini         ###   ########.fr        #
+#    Updated: 2023/06/26 19:52:19 by gle-mini         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -85,7 +85,7 @@ clean:
 	rm -rf obj
 
 fclean:
-	@make -C minilibx-linux fclean
+	@make -C minilibx-linux clean
 	@make -C libft fclean
 	rm -rf obj
 	rm -rf $(NAME)

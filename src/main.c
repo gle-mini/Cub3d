@@ -6,7 +6,7 @@
 /*   By: gle-mini <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 15:32:09 by gle-mini          #+#    #+#             */
-/*   Updated: 2023/06/26 18:33:48 by gle-mini         ###   ########.fr       */
+/*   Updated: 2023/06/26 19:54:38 by gle-mini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,13 +100,13 @@ int	ft_list_to_array_str(t_list *list, char ***array)
 
 void print_map(char **map)
 {
-	int x;
+	int y;
 
-	x = 0;
-	while (map[x])
+	y = 0;
+	while (map[y])
 	{
-		ft_putstr_fd(map[x], 1);
-		x++;
+		ft_putstr_fd(map[y], 1);
+		y++;
 	}
 }
 
@@ -143,6 +143,6 @@ int main(int argc, char **argv)
 	if (argc != 2)
 		return (NUMBER_ARG);
 	parse_map(argv[1], data);
-	//check_border(data->map);
+	check_border(data->map);
 	return (EXIT_SUCCESS);
 }
