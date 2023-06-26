@@ -6,7 +6,7 @@
 #    By: gle-mini <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/20 15:12:26 by gle-mini          #+#    #+#              #
-#    Updated: 2023/06/26 18:16:03 by gle-mini         ###   ########.fr        #
+#    Updated: 2023/06/26 19:50:04 by gle-mini         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -75,6 +75,7 @@ cub3d: $(OBJS) $(HEADER_FILE)
 
 obj/%.o: src/%.c
 	@mkdir -p obj
+	@make -C libft
 	@make -C minilibx-linux
 	$(COMPILER) $(FLAGS) -I $(HEADER) -I minilibx-linux -I libft -c $< -o $@
 
@@ -83,7 +84,10 @@ clean:
 	@make -C libft clean
 	rm -rf obj
 
-fclean:	clean
+fclean:
+	@make -C minilibx-linux fclean
+	@make -C libft fclean
+	rm -rf obj
 	rm -rf $(NAME)
 
 re:	fclean all
