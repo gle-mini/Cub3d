@@ -46,6 +46,10 @@ tags
 obj/*
 */.o
 */*.o
+.a
+*/.a
+*/*.a
+
 
 # binary
 cub3d
