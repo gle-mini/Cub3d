@@ -6,7 +6,7 @@
 /*   By: gle-mini <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 15:32:09 by gle-mini          #+#    #+#             */
-/*   Updated: 2023/06/26 18:10:43 by gle-mini         ###   ########.fr       */
+/*   Updated: 2023/06/26 18:33:48 by gle-mini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,11 +131,6 @@ void ft_init_data(t_data *data)
 	data->map = NULL;
 }
 
-int check_border(char **map)
-{
-
-}
-
 int main(int argc, char **argv)
 {
 	t_data *data;
@@ -148,6 +143,6 @@ int main(int argc, char **argv)
 	if (argc != 2)
 		return (NUMBER_ARG);
 	parse_map(argv[1], data);
-	check_border(data->map);
+	//check_border(data->map);
 	return (EXIT_SUCCESS);
 }
