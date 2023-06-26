@@ -45,6 +45,7 @@ tags
 # Fichiers objets
 obj/*
 */.o
+*/*.o
 
 # binary
 cub3d
