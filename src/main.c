@@ -6,7 +6,7 @@
 /*   By: gle-mini <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 15:32:09 by gle-mini          #+#    #+#             */
-/*   Updated: 2023/06/26 19:54:38 by gle-mini         ###   ########.fr       */
+/*   Updated: 2023/06/27 15:41:01 by gle-mini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,8 @@ void print_map(char **map)
 	int y;
 
 	y = 0;
+	if (map == NULL)
+		return ;
 	while (map[y])
 	{
 		ft_putstr_fd(map[y], 1);
