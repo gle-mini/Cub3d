@@ -20,8 +20,43 @@ int	my_strlen(char *str)
 	return (i);
 }
 
+int min(int a, int b)
+{
+	if (a > b)
+		return (b);
+	return (a);
+}
+
+int find_first_x(map)
+{
+	int	x;
+	int	y;
+	int	first_x;
+
+	x = 0;
+	y = 0;
+	first_x = INT_MAX;
+	while (map[y])
+	{
+		while (map[y][x])
+		{
+			if (map[y][x] != '0' && map[y][x] !=  '1' && map[y][x] != 'P')
+			{
+				first_x = min(first_x, x);
+			}
+			x++;
+		}
+		x = 0;
+		y++;
+	}
+	return (first_x);
+}
+
 int is_border(char **map, int x, int y)
 {
+	int	first_x;
+	int	first_y;
+
 	if (x == 0 || y == 0 || x == my_strlen(map[y]) || y == ft_arrstrlen(map))
 		return (1);
 	return (0);
@@ -52,8 +87,8 @@ int	ft_find_border(char **map, int x, int y)
 	char	tmp_char;
 
 	
-	print_map(map);
-	ft_putstr_fd("\n\n\n----------------------------\n\n\n", 1);
+	//print_map(map);
+	//ft_putstr_fd("\n\n\n----------------------------\n\n\n", 1);
 
 	if ((is_border(map, x, y) == 1 && map[y][x] != '1' )|| map[y][x] == 'X')
 		return (1);
@@ -70,7 +105,7 @@ int	ft_find_border(char **map, int x, int y)
 			|| ft_find_border(map, x, y - 1))
 			return (1);
 	}
-	ft_putstr_fd("TEST\n", 1);
+	//ft_putstr_fd("TEST\n", 1);
 	return (0);
 }
 
