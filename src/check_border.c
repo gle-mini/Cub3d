@@ -55,15 +55,11 @@ int	ft_find_border(char **map, int x, int y)
 	print_map(map);
 	ft_putstr_fd("\n\n\n----------------------------\n\n\n", 1);
 
-	if (is_border(map, x, y) == 1 && map[y][x] != '1')
+	if ((is_border(map, x, y) == 1 && map[y][x] != '1' )|| map[y][x] == 'X')
 		return (1);
-	if (is_border(map, x, y))
-		return (0);
-	/*
 	if (x < 0 || x == (int)ft_strlen(map[y])
 		|| y < 0 || y == (int)ft_arrstrlen(map))
 		return (0);
-		*/
 
 	if (is_valid(map, x, y))
 	{
@@ -94,7 +90,7 @@ int	find_max_x(char **map)
 	y = 0;
 	while (map[y])
 	{
-		max_x = max(max_x, ft_strlen(map[y]));
+		max_x = max(max_x, ft_strlen(map[y]) - 1);
 		y++;
 	}
 	return (max_x);
@@ -104,12 +100,13 @@ int	find_max_y(char **map)
 {
 	int max_y;
 
-	max_y = ft_arrstrlen(map)
+	max_y = ft_arrstrlen(map);
 	return (max_y);
 }
 
-char **alloc_copy_map(char **map, int max_x, int max_y)
+char **alloc_copy_map(char **map)
 {
+	char	**new_map;
 	int		max_x;
 	int		max_y;
 	int	i;
@@ -122,7 +119,7 @@ char **alloc_copy_map(char **map, int max_x, int max_y)
 	i =  0;
 	while (i < max_y)
 	{
-		new_map[i] = malloc(sizeof(char) * (max_x + 1));
+		new_map[i] = malloc(sizeof(char) * (max_x));
 		i++;
 	}
 	new_map[i] = NULL;
@@ -132,8 +129,46 @@ char **alloc_copy_map(char **map, int max_x, int max_y)
 char	**copy_map(char **map)
 {
 	char	**new_map;
+	int		x;
+	int		y;
 
-	new_map = alloc_copy_map(map, max_x, max_y);
+	new_map = alloc_copy_map(map);
+	x = 0;
+	y = 0;
+	while (map[y])
+	{
+		while (map[y][x])
+		{
+			if (map[y][x] == '\n')
+				new_map[y][x] = '\0';
+			else
+				new_map[y][x] = map[y][x];
+			x++;
+		}
+		x = 0;
+		y++;
+	}
+	int		max_x;
+	int		max_y;
+
+	max_x = find_max_x(map);
+	max_y = find_max_y(map);
+	x = 0;
+	y = 0;
+	while (y < max_y)
+	{
+		while (x < max_x)
+		{
+			if (map[y][x] != '0' && map[y][x] != '1' && map[y][x] != 'P')
+			{
+				new_map[y][x] = 'X';
+			}
+			x++;
+		}
+		x = 0;
+		y++;
+	}
+	print_map(new_map);	
 	return (new_map);
 }
 
@@ -143,10 +178,9 @@ int check_border(char **map)
 	char	**new_map;
 
 	new_map = copy_map(map);
-	if (copy_map == NULL)
+	if (new_map == NULL)
 		return (MALLOC_ERR);
-	/*
-	if (ft_find_border(map, 2, 2) == 1)
+	if (ft_find_border(new_map, 2, 2) == 1)
 	{
 		printf("ERROR\n");
 		return (0);
@@ -155,7 +189,7 @@ int check_border(char **map)
 	{
 		printf("OK\n");
 		return (1);
-	}*/
+	}
 	return (1);
 }
 
