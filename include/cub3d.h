@@ -6,7 +6,7 @@
 /*   By: gle-mini <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 15:34:47 by gle-mini          #+#    #+#             */
-/*   Updated: 2023/06/27 15:41:58 by gle-mini         ###   ########.fr       */
+/*   Updated: 2023/06/29 14:48:23 by gle-mini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,13 @@ typedef struct s_data {
 	char **map;
 } t_data;
 
-int check_border(char **map);
+int		check_border(char **map);
 
 void	print_map(char **map);
+
+int		check_border(char **map);
+
+char	**copy_map(char **map);
 
 #endif
 
