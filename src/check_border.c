@@ -27,29 +27,39 @@ int min(int a, int b)
 	return (a);
 }
 
-int find_first_x(map)
+void find_first_x(char **map, int *result_x, int *result_y)
 {
 	int	x;
 	int	y;
 	int	first_x;
+	int	first_y;
+	int flag;
 
 	x = 0;
 	y = 0;
+	flag = 0;
 	first_x = INT_MAX;
+	first_y = INT_MAX;
 	while (map[y])
 	{
 		while (map[y][x])
 		{
-			if (map[y][x] != '0' && map[y][x] !=  '1' && map[y][x] != 'P')
+			if (map[y][x] == '0' && map[y][x] ==  '1' && map[y][x] == 'P')
 			{
 				first_x = min(first_x, x);
+				flag = 1;	
 			}
+			else 
+				flag = 0;
+			if (flag)
+				first_y = min(first_y, y);
 			x++;
 		}
 		x = 0;
 		y++;
 	}
-	return (first_x);
+	*result_x = first_x;
+	*result_y = first_y;
 }
 
 int is_border(char **map, int x, int y)
@@ -57,7 +67,9 @@ int is_border(char **map, int x, int y)
 	int	first_x;
 	int	first_y;
 
-	if (x == 0 || y == 0 || x == my_strlen(map[y]) || y == ft_arrstrlen(map))
+	find_first_x(map, &first_x, &first_y);
+
+	if (x == first_x || y == first_y || x == my_strlen(map[y]) || y == ft_arrstrlen(map))
 		return (1);
 	return (0);
 }
